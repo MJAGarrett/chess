@@ -9,7 +9,7 @@ enemy.observeGame(theGame);
 const controller = new GameController(theGame);
 
 document.querySelector(".restart").addEventListener("click", () => {
-  theGame.restartGame();
+	theGame.restartGame();
 });
 
 controller.updateView();

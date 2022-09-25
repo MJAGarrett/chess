@@ -12,6 +12,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   background-color: #152525;
 }
@@ -24,6 +25,7 @@ body {
   justify-content: space-evenly;
   flex-direction: column;
 }
+
 .side-info {
   flex: 1 1 auto;
   background-color: bisque;
@@ -54,9 +56,11 @@ body {
 button.white {
   background-color: white;
 }
+
 button.black {
   background-color: black;
 }
+
 [class*="has-"] span {
   font: var(--fa-font-solid);
   text-rendering: auto;
@@ -71,28 +75,36 @@ button.black {
   justify-content: center;
   align-items: center;
 }
+
 [class*="-Pawn-"] span {
   content: "\f443";
 }
+
 [class*="-Rook-"] span {
   content: "\f447";
 }
+
 [class*="-Knight-"] span {
   content: "\f441";
 }
+
 [class*="-King-"] span {
   content: "\f43f";
 }
+
 [class*="-Queen-"] span {
   content: "\f445";
 }
+
 [class*="-Bishop-"] span {
   content: "\f43a";
 }
+
 [class*="-black"] span {
   color: #111;
   -webkit-text-stroke: #888 2px;
 }
+
 [class*="-white"] {
   color: #eee;
   -webkit-text-stroke: #888 2px;
@@ -100,13 +112,11 @@ button.black {
 
 button.selected {
   outline: var(--space-between-squares) orange solid;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(0, 0, 0, 50%),
-    rgba(0, 0, 0, 50%) 10%,
-    rgba(255, 255, 255, 50%) 10%,
-    rgba(255, 255, 255, 50%) 20%
-  );
+  background-image: repeating-linear-gradient(45deg,
+      rgba(0, 0, 0, 50%),
+      rgba(0, 0, 0, 50%) 10%,
+      rgba(255, 255, 255, 50%) 10%,
+      rgba(255, 255, 255, 50%) 20%);
   background-size: 25px 25px;
   background-repeat: no-repeat;
   background-position: top right;
@@ -119,11 +129,13 @@ button.selected {
     --space-between-squares: 4px;
   }
 }
+
 .game-info {
   display: flex;
   flex-wrap: wrap;
 }
-.game-info > * {
+
+.game-info>* {
   flex: 1 1 auto;
   margin: 1em;
   text-align: center;
@@ -141,6 +153,7 @@ button.selected {
   .UI-area {
     flex-direction: row;
   }
+
   .side-info {
     height: var(--board-height);
     align-self: center;

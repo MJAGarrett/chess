@@ -1,2 +1,4 @@
 projectTodos.md
 .env
+.eslintrc.json
+node_modules
