@@ -1,0 +1,149 @@
+:root {
+  --board-width: calc(min(100vh, 100vw));
+  --board-height: calc(var(--board-width) * 1.2);
+  --game-piece-size: calc(min(var(--board-height), var(--board-width)) * 0.1);
+  --space-between-squares: 3px;
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: #152525;
+}
+
+.UI-area {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+.side-info {
+  flex: 1 1 auto;
+  background-color: bisque;
+  border: 5px #888 solid;
+}
+
+.game {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  grid-template-columns: repeat(8, 1fr);
+  width: var(--board-width);
+  height: var(--board-height);
+  grid-gap: var(--space-between-squares);
+  align-self: center;
+  background-color: gray;
+  padding: var(--space-between-squares);
+}
+
+.game button {
+  position: relative;
+  flex: 1 1 auto;
+  border: none;
+  appearance: none;
+  display: flex;
+}
+
+button.white {
+  background-color: white;
+}
+button.black {
+  background-color: black;
+}
+[class*="has-"] span {
+  font: var(--fa-font-solid);
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  pointer-events: none;
+  transform: perspective(300px);
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  font-size: var(--game-piece-size);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+[class*="-Pawn-"] span {
+  content: "\f443";
+}
+[class*="-Rook-"] span {
+  content: "\f447";
+}
+[class*="-Knight-"] span {
+  content: "\f441";
+}
+[class*="-King-"] span {
+  content: "\f43f";
+}
+[class*="-Queen-"] span {
+  content: "\f445";
+}
+[class*="-Bishop-"] span {
+  content: "\f43a";
+}
+[class*="-black"] span {
+  color: #111;
+  -webkit-text-stroke: #888 2px;
+}
+[class*="-white"] {
+  color: #eee;
+  -webkit-text-stroke: #888 2px;
+}
+
+button.selected {
+  outline: var(--space-between-squares) orange solid;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 50%),
+    rgba(0, 0, 0, 50%) 10%,
+    rgba(255, 255, 255, 50%) 10%,
+    rgba(255, 255, 255, 50%) 20%
+  );
+  background-size: 25px 25px;
+  background-repeat: no-repeat;
+  background-position: top right;
+}
+
+@media screen and (min-width: 500px) {
+  :root {
+    --board-height: calc(min(100vh, 100vw));
+    --board-width: calc(min(100vh, 100vw));
+    --space-between-squares: 4px;
+  }
+}
+.game-info {
+  display: flex;
+  flex-wrap: wrap;
+}
+.game-info > * {
+  flex: 1 1 auto;
+  margin: 1em;
+  text-align: center;
+}
+
+@media screen and (min-width: 810px) {
+  :root {
+    --board-height: 810px;
+    --board-width: 810px;
+    --space-between-squares: 5px;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .UI-area {
+    flex-direction: row;
+  }
+  .side-info {
+    height: var(--board-height);
+    align-self: center;
+    max-width: 700px;
+  }
+}
