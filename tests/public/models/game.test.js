@@ -1,8 +1,8 @@
-import gameStart from "../../../public/js/models/game";
-import assert from "assert";
+// import gameStart from "../../../public/js/models/game";
+// // import assert from "assert";
 
-let game;
+// let game;
 
-beforeEach(function setup() {
-  game = gameStart("easy");
-});
+// beforeEach(function setup() {
+// 	game = gameStart("easy");
+// });

@@ -12,19 +12,19 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 server.addListener("listening", () => {
-  console.log(`App listening on port ${PORT}`);
+	console.log(`App listening on port ${PORT}`);
 });
 
 io.on("connection", (socket) => {
-  console.log("Socket connected");
+	console.log("Socket connected");
 
-  socket.on("gamemove", (move) => {
-    socket.broadcast.emit("gamemove", move);
-  });
+	socket.on("gamemove", (move) => {
+		socket.broadcast.emit("gamemove", move);
+	});
 
-  socket.on("disconnect", () => {
-    console.log("Socket disconnected");
-  });
+	socket.on("disconnect", () => {
+		console.log("Socket disconnected");
+	});
 });
 
 server.listen(PORT);

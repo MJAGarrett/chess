@@ -4,29 +4,32 @@ import httpErrors from "http-errors";
 import routes from "./routes";
 
 export default () => {
-  const app = express();
+	const app = express();
 
-  app.set("view engine", "ejs");
-  app.set("views", path.join(__dirname, "./views"));
+	app.set("view engine", "ejs");
 
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+	// eslint-disable-next-line no-undef
+	app.set("views", path.join(__dirname, "./views"));
 
-  app.use("/", express.static(path.join(__dirname, "../public")));
+	app.use(express.json());
+	app.use(express.urlencoded({ extended: true }));
 
-  app.use("/", routes());
+	// eslint-disable-next-line no-undef
+	app.use("/", express.static(path.join(__dirname, "../public")));
 
-  // Catch 404 errors and send them to the error handler.
-  app.use((req, res, next) => {
-    next(httpErrors(404));
-  });
+	app.use("/", routes());
 
-  app.use((err, req, res) => {
-    res.locals.error = req.app.get("env") === "development" ? err : {};
+	// Catch 404 errors and send them to the error handler.
+	app.use((req, res, next) => {
+		next(httpErrors(404));
+	});
 
-    res.status(err.status || 500);
-    res.render("error");
-  });
+	app.use((err, req, res) => {
+		res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  return app;
+		res.status(err.status || 500);
+		res.render("error");
+	});
+
+	return app;
 };
