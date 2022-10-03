@@ -10,6 +10,7 @@ export default class GameController {
 	constructor(game) {
 		this.gameModel = game;
 		game.registerController(this);
+		this.initializeBoard();
 		this.gameView = document.querySelector(".game");
 		this.checkmateIndicator = document.querySelector(".checkmate");
 		this.checkIndicator = document.querySelector(".check");
@@ -31,13 +32,13 @@ export default class GameController {
 		this.turnIndicator.textContent = properText;
 	}
 	updateView() {
-		const board = this.gameModel.board;
+		const pieces = this.gameModel.board;
 		let boardToRender = [];
-		board.forEach((row) => {
-			row.forEach((square) => {
+		pieces.forEach((row, rowIndex) => {
+			row.forEach((piece, colIndex) => {
 				let newSquare = this.createSquare(
-					square.squareAttributes,
-					square.gamePiece
+					this.board[rowIndex][colIndex],
+					piece
 				);
 				boardToRender.push(newSquare);
 			});
@@ -57,7 +58,7 @@ export default class GameController {
 	}
 
 	/**
-	 * An event handler which moves the selected chess along with the mouse.
+	 * An event handler which moves the selected piece along with the mouse.
 	 *
 	 * @param {Event} e The mousemove event.
 	 */
@@ -71,6 +72,26 @@ export default class GameController {
 			this.selection.style.transform = "translateX(-50%) translateY(-50%)";
 			this.selection.style.zIndex = 10;
 		}
+	}
+
+	initializeBoard() {
+		let board = new Array(8).fill(null).map(() => new Array(8).fill(null));
+
+		for (let outer = 0; outer < board.length; outer++) {
+			let colorStaggered = outer % 2 === 0 ? false : true;
+			for (let inner = 0; inner < board[outer].length; inner++) {
+				let color;
+				if (!colorStaggered) color = inner % 2 === 0 ? "white" : "black";
+				else color = inner % 2 === 0 ? "black" : "white";
+				board[outer][inner] = {
+					coordinates: { row: outer, column: inner },
+					color: color,
+					selected: false,
+				};
+			}
+		}
+
+		this.board = board;
 	}
 
 	createSquare(squareAttributes, gamePiece) {

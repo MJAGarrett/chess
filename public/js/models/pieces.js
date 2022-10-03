@@ -18,12 +18,12 @@ export default function PiecesSetup(gameBoard) {
 			super();
 			this.name = "Pawn";
 			this.team = team;
-			this.initialMove = true;
+			this.hasNotMoved = true;
 			if (team === "black")
 				this.moveImplementation = (row, column) => {
 					let moves = [];
-					if (this.initialMove && row - 2 >= 0) {
-						if (!board[row - 1][column].gamePiece)
+					if (this.hasNotMoved && row - 2 >= 0) {
+						if (!board[row - 1][column])
 							moves.push({ row: row - 2, column, canCapture: false });
 					}
 					moves.push({ row: row - 1, column, canCapture: false });
@@ -44,8 +44,8 @@ export default function PiecesSetup(gameBoard) {
 			else
 				this.moveImplementation = (row, column) => {
 					let moves = [];
-					if (this.initialMove && row + 2 <= 7) {
-						if (!board[row + 1][column].gamePiece)
+					if (this.hasNotMoved && row + 2 <= 7) {
+						if (!board[row + 1][column])
 							moves.push({ row: row + 2, column, canCapture: false });
 					}
 					moves.push({ row: row + 1, column, canCapture: false });
@@ -65,7 +65,7 @@ export default function PiecesSetup(gameBoard) {
 				};
 		}
 		setMoved() {
-			this.initialMove = false;
+			this.hasNotMoved = false;
 		}
 	}
 
@@ -144,6 +144,8 @@ export default function PiecesSetup(gameBoard) {
 
 	function diagonalMovement(row, column) {
 		let moves = [];
+
+		// Movement to Upper Left
 		for (let up = row - 1; up >= 0; up--) {
 			// Keeps horizontal and vertical distance the same for each
 			// potential move.
@@ -155,7 +157,7 @@ export default function PiecesSetup(gameBoard) {
 			// piece on the board.
 			if (newCol < 0) break;
 			moves.push({ row: up, column: newCol, canCapture: true });
-			const potentialBlocker = board[up][newCol].gamePiece;
+			const potentialBlocker = board[up][newCol];
 			if (potentialBlocker) break;
 		}
 
@@ -165,7 +167,7 @@ export default function PiecesSetup(gameBoard) {
 			let newCol = column + distance;
 			if (newCol > 7) break;
 			moves.push({ row: up, column: newCol, canCapture: true });
-			const potentialBlocker = board[up][newCol].gamePiece;
+			const potentialBlocker = board[up][newCol];
 			if (potentialBlocker) break;
 		}
 
@@ -175,7 +177,7 @@ export default function PiecesSetup(gameBoard) {
 			let newCol = column - distance;
 			if (newCol < 0) break;
 			moves.push({ row: up, column: newCol, canCapture: true });
-			const potentialBlocker = board[up][newCol].gamePiece;
+			const potentialBlocker = board[up][newCol];
 			if (potentialBlocker) break;
 		}
 
@@ -185,7 +187,7 @@ export default function PiecesSetup(gameBoard) {
 			let newCol = column + distance;
 			if (newCol > 7) break;
 			moves.push({ row: up, column: newCol, canCapture: true });
-			const potentialBlocker = board[up][newCol].gamePiece;
+			const potentialBlocker = board[up][newCol];
 			if (potentialBlocker) break;
 		}
 		return moves;
@@ -200,7 +202,7 @@ export default function PiecesSetup(gameBoard) {
 				column,
 				canCapture: true,
 			});
-			const potentialBlocker = board[rowDecrement][column].gamePiece;
+			const potentialBlocker = board[rowDecrement][column];
 			if (potentialBlocker) break;
 		}
 		// Movement "down" board (towards bottom of screen)
@@ -210,7 +212,7 @@ export default function PiecesSetup(gameBoard) {
 				column,
 				canCapture: true,
 			});
-			const potentialBlocker = board[rowIncrement][column].gamePiece;
+			const potentialBlocker = board[rowIncrement][column];
 			if (potentialBlocker) break;
 		}
 		// Movement to the right
@@ -220,7 +222,7 @@ export default function PiecesSetup(gameBoard) {
 				column: colIncrement,
 				canCapture: true,
 			});
-			const potentialBlocker = board[row][colIncrement].gamePiece;
+			const potentialBlocker = board[row][colIncrement];
 			if (potentialBlocker) break;
 		}
 		// Movement to the left
@@ -230,7 +232,7 @@ export default function PiecesSetup(gameBoard) {
 				column: colDecrement,
 				canCapture: true,
 			});
-			const potentialBlocker = board[row][colDecrement].gamePiece;
+			const potentialBlocker = board[row][colDecrement];
 			if (potentialBlocker) break;
 		}
 		return moves;

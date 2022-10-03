@@ -54,7 +54,7 @@ class Game {
 	selectPiece(index) {
 		// *** This section determines whether selection is possible.
 		const { row, column } = index;
-		const selection = this.board[row][column].gamePiece;
+		const selection = this.board[row][column];
 
 		// Returns if selection is null
 		if (selection === null) return;
@@ -105,7 +105,7 @@ class Game {
 		// If the selected square contains the currently selected piece then
 		// deselect it.
 		const piece = this.selectedPiece.gamePiece;
-		if (this.board[row][column].gamePiece === piece) {
+		if (this.board[row][column] === piece) {
 			this.selectedPiece = null;
 			this.controller.updateView();
 			return;
@@ -163,17 +163,17 @@ class Game {
 			}
 
 			// Updates the board based on the selection.
-			newBoard[move.row][move.column].gamePiece = finalChoice;
-			newBoard[oldRow][oldColumn].gamePiece = null;
+			newBoard[move.row][move.column] = finalChoice;
+			newBoard[oldRow][oldColumn] = null;
 		} else {
 			// Update board as normal if there was no promotion.
-			newBoard[move.row][move.column].gamePiece = piece;
-			newBoard[oldRow][oldColumn].gamePiece = null;
+			newBoard[move.row][move.column] = piece;
+			newBoard[oldRow][oldColumn] = null;
 		}
 
 		if (piece.name === "Pawn") {
-			console.log("Piece has moved?" + piece.initialMove);
-			if (piece.initialMove) piece.setMoved();
+			console.log("Piece has not moved?" + piece.hasNotMoved);
+			if (piece.hasNotMoved) piece.setMoved();
 		}
 
 		this.board = newBoard;
@@ -230,15 +230,15 @@ class Game {
 		// prevent diagonal moves unless there is an opponent in that square.
 		const validMoves = temp.filter((move) => {
 			const { row, column, canCapture } = move;
-			const block = board[row][column];
+			const potentialPiece = board[row][column];
 			// eslint-disable-next-line no-prototype-builtins
 			if (move.hasOwnProperty("mustCapture")) {
 				// Check for property first to prevent exceptions.
-				if (move.mustCapture && block.gamePiece === null) return false;
+				if (move.mustCapture && potentialPiece === null) return false;
 			}
 			if (
-				block.gamePiece !== null &&
-				(canCapture === false || movingPiece.team === block.gamePiece.team)
+				potentialPiece !== null &&
+				(canCapture === false || movingPiece.team === potentialPiece.team)
 			)
 				return false;
 			return true;
@@ -309,7 +309,7 @@ class Game {
 				let checkingMoves = [];
 				if (validMoves.length > 0) {
 					checkingMoves = validMoves.filter((move) => {
-						const pieceInSquare = board[move.row][move.column].gamePiece;
+						const pieceInSquare = board[move.row][move.column];
 						if (pieceInSquare) if (pieceInSquare.name === "King") return true;
 						return false;
 					});
@@ -330,19 +330,24 @@ class Game {
 		// Flatten the array as the contents are of interest and the structure is irrelevent for this function.
 		const flatBoard = board.flat();
 
-		// Filter out the squares that do not have a game piece.
-		const allSquares = flatBoard.filter((block) => block.gamePiece !== null);
-
 		// Return an array that contains only the necessary pieces of information.
-		const allPieces = allSquares.map((square) => {
-			return {
-				gamePiece: square.gamePiece,
-				coordinates: square.squareAttributes.coordinates,
-			};
+		const allPieces = flatBoard.map((piece, index) => {
+			if (piece) {
+				const row = Math.floor(index / 8);
+				const column = index % 8;
+				return {
+					gamePiece: piece,
+					coordinates: { row, column },
+				};
+			}
+			return null;
 		});
 
+		// Filter out the squares that do not have a game piece.
+		const allPiecesInfo = allPieces.filter((piece) => piece !== null);
+
 		// console.log(allPieces);
-		return allPieces;
+		return allPiecesInfo;
 	}
 
 	/**
@@ -545,30 +550,30 @@ class Game {
 	 * @returns {[[BoardPiece | Null]]} A copy of the board with new references to all the pieces in the same locations as the original.
 	 */
 	copyHistory(board) {
-		const newBoard = this.buildBoard();
+		const newBoard = new Array(8).fill(null).map(() => new Array(8).fill(null));
 		const { Rook, Pawn, Queen, King, Knight, Bishop } = PiecesSetup(newBoard);
 		for (let row = 0; row < newBoard.length; row++) {
 			for (let col = 0; col < newBoard.length; col++) {
-				if (board[row][col].gamePiece !== null) {
-					const piece = board[row][col].gamePiece;
+				if (board[row][col] !== null) {
+					const piece = board[row][col];
 					switch (piece.name) {
 					case "Rook":
-						newBoard[row][col].gamePiece = new Rook(piece.team);
+						newBoard[row][col] = new Rook(piece.team);
 						break;
 					case "Pawn":
-						newBoard[row][col].gamePiece = new Pawn(piece.team);
+						newBoard[row][col] = new Pawn(piece.team);
 						break;
 					case "King":
-						newBoard[row][col].gamePiece = new King(piece.team);
+						newBoard[row][col] = new King(piece.team);
 						break;
 					case "Queen":
-						newBoard[row][col].gamePiece = new Queen(piece.team);
+						newBoard[row][col] = new Queen(piece.team);
 						break;
 					case "Bishop":
-						newBoard[row][col].gamePiece = new Bishop(piece.team);
+						newBoard[row][col] = new Bishop(piece.team);
 						break;
 					case "Knight":
-						newBoard[row][col].gamePiece = new Knight(piece.team);
+						newBoard[row][col] = new Knight(piece.team);
 						break;
 					default:
 						break;
@@ -593,83 +598,53 @@ class Game {
 		// Saves old position of piece
 		const oldRow = oldPosition.row;
 		const oldColumn = oldPosition.column;
-		const piece = boardCopy[oldRow][oldColumn].gamePiece;
+		const piece = boardCopy[oldRow][oldColumn];
 
 		// Updates board to reflect piece's movement
-		boardCopy[move.row][move.column].gamePiece = piece;
-		boardCopy[oldRow][oldColumn].gamePiece = null;
+		boardCopy[move.row][move.column] = piece;
+		boardCopy[oldRow][oldColumn] = null;
 		return boardCopy;
 	}
 	/**
-	 * Creates a new board and places new pieces on it.
+	 * Creates a 2D array representing a game board and initializes the placement of game pieces.
 	 *
 	 * @returns {[[BoardPiece | Null]]} A game board after the pieces have been placed on it.
 	 */
 	initialBoardSetup() {
-		const board = this.buildBoard();
-		const piecesClasses = PiecesSetup(board);
-		return this.placePieces(board, piecesClasses);
-	}
-
-	/**
-	 * Creates a 2D array representing a game board with properties set for each of the squares and a property set for storing a game piece
-	 *
-	 * @returns
-	 */
-	buildBoard() {
 		let board = new Array(8).fill(null).map(() => new Array(8).fill(null));
+		const piecesClasses = PiecesSetup(board);
 
-		for (let outer = 0; outer < board.length; outer++) {
-			let colorStaggered = outer % 2 === 0 ? false : true;
-			for (let inner = 0; inner < board[outer].length; inner++) {
-				let color;
-				if (!colorStaggered) color = inner % 2 === 0 ? "white" : "black";
-				else color = inner % 2 === 0 ? "black" : "white";
-				board[outer][inner] = {
-					gamePiece: null,
-					squareAttributes: {
-						coordinates: { row: outer, column: inner },
-						color: color,
-						selected: false,
-					},
-				};
-			}
-		}
-
-		return board;
-	}
-
-	placePieces(board, piecesClasses) {
 		const { Rook, Pawn, Queen, King, Knight, Bishop } = piecesClasses;
 
 		// Set up black pieces
-		board[7][0].gamePiece = new Rook("black");
-		board[7][7].gamePiece = new Rook("black");
-		board[7][1].gamePiece = new Knight("black");
-		board[7][2].gamePiece = new Bishop("black");
-		board[7][5].gamePiece = new Bishop("black");
-		board[7][3].gamePiece = new Queen("black");
-		board[7][6].gamePiece = new Knight("black");
-		board[7][4].gamePiece = new King("black");
-		board[6].forEach((block) => {
-			block.gamePiece = new Pawn("black");
+		board[7][0] = new Rook("black");
+		board[7][7] = new Rook("black");
+		board[7][1] = new Knight("black");
+		board[7][2] = new Bishop("black");
+		board[7][5] = new Bishop("black");
+		board[7][3] = new Queen("black");
+		board[7][6] = new Knight("black");
+		board[7][4] = new King("black");
+		board[6].forEach((block, index) => {
+			board[6][index] = new Pawn("black");
 		});
 
 		// Set up white pieces
-		board[0][0].gamePiece = new Rook("white");
-		board[0][7].gamePiece = new Rook("white");
-		board[0][1].gamePiece = new Knight("white");
-		board[0][2].gamePiece = new Bishop("white");
-		board[0][5].gamePiece = new Bishop("white");
-		board[0][3].gamePiece = new Queen("white");
-		board[0][6].gamePiece = new Knight("white");
-		board[0][4].gamePiece = new King("white");
-		board[1].forEach((block) => {
-			block.gamePiece = new Pawn("white");
+		board[0][0] = new Rook("white");
+		board[0][7] = new Rook("white");
+		board[0][1] = new Knight("white");
+		board[0][2] = new Bishop("white");
+		board[0][5] = new Bishop("white");
+		board[0][3] = new Queen("white");
+		board[0][6] = new Knight("white");
+		board[0][4] = new King("white");
+		board[1].forEach((block, index) => {
+			board[1][index] = new Pawn("white");
 		});
 
 		return board;
 	}
+
 	registerController(controller) {
 		this.controller = controller;
 	}

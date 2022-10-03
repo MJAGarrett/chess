@@ -154,10 +154,10 @@ class MediumAI extends AI {
 		let score = 0;
 		const { row, column, canCapture } = move;
 		const potentialCapture = board[row][column];
-		if (!potentialCapture.gamePiece) {
+		if (!potentialCapture) {
 			score += 0;
 		} else
-			switch (potentialCapture.gamePiece.name) {
+			switch (potentialCapture.name) {
 			// First case will never eval to true for a Medium AI, but exists so that
 			// a Hard AI can use it for ranking potential future moves in a chain.
 			case "King":
@@ -189,8 +189,8 @@ class MediumAI extends AI {
 			let worstCase = 0;
 			const { row, column } = move;
 			const potentialCapture = alternateHistory[row][column];
-			if (!potentialCapture.gamePiece) return;
-			switch (potentialCapture.gamePiece.name) {
+			if (!potentialCapture) return;
+			switch (potentialCapture.name) {
 			case "King":
 				worstCase = 100;
 				break;
@@ -315,10 +315,10 @@ class Move {
 		}
 		const { row, column } = this.moveInfo;
 		const potentialCapture = this.boardBeforeMove[row][column];
-		if (!potentialCapture.gamePiece) {
+		if (!potentialCapture) {
 			score += 0;
 		} else
-			switch (potentialCapture.gamePiece.name) {
+			switch (potentialCapture.name) {
 			// First case will never eval to true for a Medium AI, but exists so that
 			// a Hard AI can use it for ranking potential future moves in a chain.
 			case "King":
@@ -360,8 +360,8 @@ class Move {
 			let worstCase = 0;
 			const { row, column } = move;
 			const potentialCapture = alternateHistory[row][column];
-			if (!potentialCapture.gamePiece) return;
-			switch (potentialCapture.gamePiece.name) {
+			if (!potentialCapture) return;
+			switch (potentialCapture.name) {
 			case "King":
 				worstCase = 100;
 				break;
