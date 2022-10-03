@@ -172,7 +172,7 @@ class Game {
 		}
 
 		if (piece.name === "Pawn") {
-			console.log("Piece has not moved?" + piece.hasNotMoved);
+			console.log("Piece has not moved? " + piece.hasNotMoved);
 			if (piece.hasNotMoved) piece.setMoved();
 		}
 
@@ -561,7 +561,10 @@ class Game {
 						newBoard[row][col] = new Rook(piece.team);
 						break;
 					case "Pawn":
-						newBoard[row][col] = new Pawn(piece.team);
+						// eslint-disable-next-line no-case-declarations
+						const newPawn = new Pawn(piece.team);
+						if (!piece.hasNotMoved) newPawn.hasNotMoved = false;
+						newBoard[row][col] = newPawn;
 						break;
 					case "King":
 						newBoard[row][col] = new King(piece.team);
