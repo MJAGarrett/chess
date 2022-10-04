@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+body > * {
+  flex: 0 0 auto;
+}
+label {
+  display: block;
+}
+table {
+  margin: 0 auto;
+  width: 75%;
+  background-color: hsl(34, 25%, 75%);
+  border-collapse: collapse;
+  max-width: 1000px;
+}
+
+th {
+  font-size: 1.25rem;
+}
+
+td,
+th {
+  padding: .5em;
+  border: 2px solid black;
+}
+
+.local-play {
+  text-align: center;
+}
+.local-play > p {
+  margin: .5em;
+}

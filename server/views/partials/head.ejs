@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <% if (pageData.styleSheets.length> 0) {
+    pageData.styleSheets.forEach((styleSheet) => { %>
+    <link rel="stylesheet" href="/css/<%=styleSheet%>.css" />
+    <% })} %>
+      <title>Checkers</title>
+      <script type="module" src="/socket.io/socket.io.js"></script>
+     
+      <%- include("./scripts") %>
+</head>
+
+<body>
