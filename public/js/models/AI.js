@@ -12,12 +12,13 @@ class AI {
 	}
 
 	/**
-	 * A wrapper function which is used to add a slight delay before the move is made.
+	 * A wrapper function which used to encapsulate implementation between subclasses.
 	 */
 	takeTurn() {
 		const moves = this.getMoves();
 		return this.chooseMoves(moves);
 	}
+
 	/**
 	 * A function which gets the moves an AI could make, filtering out moves which would result in a check.
 	 *
@@ -78,6 +79,7 @@ class EasyAI extends AI {
 	constructor() {
 		super();
 	}
+
 	/**
 	 * Will call the game with the AI's choice and the game will update its state accordingly.
 	 *
@@ -132,12 +134,13 @@ class MediumAI extends AI {
 		const selection = Math.round(Math.random() * (bestMoves.length - 1));
 		this.game.AISelection(bestMoves[selection]);
 	}
+
 	/**
 	 * Ranks moves based on which piece - if any - the move can capture.
 	 *
 	 * A move which can capture the King is weighed extremely heavily so as to greatly incentivize AI to select moves to lead to a capture.
 	 *
-	 * @param {[{row: Number, column: Number, canCapture: Boolean, originalCoordinates: {row: Number, column: Number}}]} moves An array of all moves which the AI could make.
+	 * @param {{row: Number, column: Number, canCapture: Boolean, originalCoordinates: {row: Number, column: Number}}[]} potentialMoves An array of all moves which the AI could make.
 	 * @returns {Map<{row: Number, column: Number, canCapture: Boolean, originalCoordinates: {row: Number, column: Number}}, Number>} A map consisting of a move as a key
 	 * and a number representing its weighted value.
 	 */
@@ -150,6 +153,15 @@ class MediumAI extends AI {
 
 		return moveRanks;
 	}
+
+	/**
+	 * Ranks a move based on the potential capture a move can make and the worst case scenario of the enemy's response.
+	 * 
+	 * Worst case scenario is defined as the highest ranking piece which can be captured on the next move after the given move.
+	 * @param {{row: Number, column: Number, canCapture: Boolean, originalCoordinates: {row: Number, column: Number}}} move An object representing a potential move.
+	 * @param {(BoardPiece | Null)[][]} board The board state against which to evaluate the move.
+	 * @returns {Number} A score for the given move.
+	 */
 	rankMove(move, board = this.game.board) {
 		let score = 0;
 		const { row, column, canCapture } = move;
@@ -215,12 +227,22 @@ class MediumAI extends AI {
 	}
 }
 
+/**
+ * A hard difficulty implementation of the AI.
+ *
+ * Weighs moves based on a score.
+ * Uses a tree data structure to evaluate and score moves.
+ */
 class HardAI extends AI {
 	constructor() {
 		super();
 		this.moveTree = new MoveTree(this);
 	}
 
+	/**
+	 * Calls the AI's moveTree to evaluate the best choices for a potential move.
+	 * If no moves are possible, have the game check for a checkmate. Else choose a random move.
+	 */
 	takeTurn() {
 		const moves = this.moveTree.getMoves();
 		if (moves.length === 0) return this.game.checkForCheckMate();
@@ -233,14 +255,29 @@ class HardAI extends AI {
 }
 
 class MoveTree {
+	/**
+	 * @param {AI} AIReference A reference to the AI that will utilize this tree.
+	 */
 	constructor(AIReference) {
 		this.AI = AIReference;
 		this.potentialMoves = [];
 	}
+	
+	/**
+	 * 
+	 * @returns An array of the best possible moves in an AI's situation.
+	 */
 	getMoves() {
 		this.addMoves();
+		// return this.genTest();
 		return this.findBestMoves();
 	}
+
+	/**
+	 * Calls the AI to get all moves it can make.
+	 * Then ranks the moves and finds all possible next moves and ranks those in turn.
+	 * Saves the moves to the potentialMoves property.
+	 */
 	addMoves() {
 		let potentialMoves = [];
 		const moves = this.AI.getMoves();
@@ -257,43 +294,38 @@ class MoveTree {
 		});
 		this.potentialMoves = potentialMoves;
 	}
+
+	/**
+	 * 
+	 * @returns {Move[]} An array of the best possible moves.
+	 */
 	findBestMoves() {
 		let bestScore = -999;
-		this.potentialMoves.forEach((initialMove) => {
-			initialMove.nextMoves.forEach((nextMove) => {
-				if (nextMove.score > bestScore) bestScore = nextMove.score;
-			});
-		});
-
 		let bestMoves = [];
 
 		this.potentialMoves.forEach((initialMove) => {
 			initialMove.nextMoves.forEach((nextMove) => {
-				if (nextMove.score >= bestScore && !bestMoves.includes(initialMove)) {
+				if (nextMove.score > bestScore) {
+					bestScore = nextMove.score;
+					bestMoves = [];
+					bestMoves.push(initialMove);
+				} else if (nextMove.score === bestScore) {
 					bestMoves.push(initialMove);
 				}
 			});
 		});
 		return bestMoves;
 	}
-
-	// findBestMoves() {
-	//   let bestScore = -999;
-	//   this.potentialMoves.forEach((move) => {
-	//     if (move.score > bestScore) bestScore = move.score;
-	//   })
-
-	//   let bestMoves = [];
-	//   this.potentialMoves.forEach((move) => {
-	//     if (move.score === bestScore) {
-	//       bestMoves.push(move);
-	//     }
-	//   })
-	//   return bestMoves;
-	// }
 }
 
 class Move {
+	/**
+	 * 
+	 * @param {{row: Number, column: Number, canCapture: Boolean, originalCoordinates: {row: Number, column: Number}}} move A potential move.
+	 * @param {(BoardPiece | null)[][]} board A game board against which to compare the move.
+	 * @param {MoveTree} tree The tree structure which this move resides in.
+	 * @param {Move | null} parent The previous move that must be made to get to this move.
+	 */
 	constructor(move, board, tree, parent = null) {
 		this.tree = tree;
 		this.score = 0;
@@ -302,12 +334,29 @@ class Move {
 		this.nextMoves = [];
 		this.parent = parent;
 	}
+	/**
+	 * Sets the move's score to a value.
+	 * @param {Number} score A score for the move
+	 * @returns The score after it has been set
+	 */
 	setScore(score) {
 		return (this.score = score);
 	}
+
+	/**
+	 * Returns the move's current score.
+	 * @returns {number} The move's score
+	 */
 	getScore() {
 		return this.score;
 	}
+
+	/**
+	 * Ranks a move based on the potential capture a move can make and the worst case scenario of the enemy's response.
+	 * 
+	 * Worst case scenario is defined as the highest ranking piece which can be captured on the next move after the given move.
+	 * @returns {number} The score after ranking
+	 */
 	rankMove() {
 		let score = 0;
 		if (this.parent) {
@@ -343,6 +392,11 @@ class Move {
 
 		return this.setScore(score);
 	}
+
+	/**
+	 * Evaluates the worst case scenario after a move is called.
+	 * @returns {number} The score of a move's worst potential future.
+	 */
 	scoreStateAfterMove() {
 		const { row, column } = this.moveInfo;
 		const alternateHistory = this.tree.AI.game.alternateHistory(
@@ -383,6 +437,10 @@ class Move {
 		});
 		return score;
 	}
+
+	/**
+	 * Gets the next possible moves after this move.
+	 */
 	getNextMoves() {
 		const movesInfo = this.tree.AI.getMoves(this.boardAfterMove);
 		movesInfo.forEach((move) => {
@@ -391,6 +449,11 @@ class Move {
 	}
 }
 
+/**
+ * A factory function which will return an AI at a desired difficulty level.
+ * @param {"easy" | "medium" | "hard"} difficultyLevel A string representing the requested difficulty level of an AI instance.
+ * @returns {AI} An instance of an AI object
+ */
 export default function AIFactory(difficultyLevel) {
 	if (!difficultyLevel) {
 		throw new Error("Must define an AI difficulty");

@@ -1,6 +1,7 @@
 projectTodos.md
 .env
 node_modules
+temp/
 
 ## Windows Specific
 # Windows thumbnail cache files

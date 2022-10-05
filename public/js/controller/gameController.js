@@ -19,18 +19,39 @@ export default class GameController {
 		this.selectionParentRect = null;
 		window.addEventListener("mousemove", (e) => this.handleMovement(e));
 	}
+
+	/**
+	 * Updates the view if the game is in a check state.
+	 * @param {Boolean} checkState A boolean representing if the game model is in a check state.
+	 */
 	updateCheckIndicator(checkState) {
 		const inCheck = checkState ? "True" : "False";
 		this.checkIndicator.textContent = inCheck;
 	}
+
+	/**
+	 * Updates the view if the game is in a checkmate.
+	 * @param {Boolean} checkmateState A boolean representing if the game model is in checkmate.
+	 */
 	updateCheckmateIndicator(checkmateState) {
 		const isCheckmate = checkmateState ? "Checkmate" : "False";
 		this.checkmateIndicator.textContent = isCheckmate;
 	}
+
+	/**
+	 * Updates the view to reflect a change in turn.
+	 * @param {String} turn The name of the team whose turn it is.
+	 */
 	updateTurnIndicator(turn) {
 		const properText = turn.charAt(0).toUpperCase() + turn.slice(1);
 		this.turnIndicator.textContent = properText;
 	}
+
+	/**
+	 * Calls necessary methods for updating the view.
+	 * 
+	 * Paints a new board with game pieces placed to reflect their position in the game model.
+	 */
 	updateView() {
 		const pieces = this.gameModel.board;
 		let boardToRender = [];
@@ -74,6 +95,11 @@ export default class GameController {
 		}
 	}
 
+	/**
+	 * Creates a two-dimensional array representing the properties of the game board.
+	 * 
+	 * Saves this board as a property of the Controller object.
+	 */
 	initializeBoard() {
 		let board = new Array(8).fill(null).map(() => new Array(8).fill(null));
 
@@ -94,6 +120,12 @@ export default class GameController {
 		this.board = board;
 	}
 
+	/**
+	 * Creates the DOM elements necessary to represent a board square based on the board properties of the controller, and the
+	 * board state of the game model.
+	 * @param {{coordinates: {row: Number, column: Number}, color: String, selected: Boolean}} squareAttributes An object representing the properties of an individual square.
+	 * @param {GamePiece | null} gamePiece The game piece potentially in a square.
+	 */
 	createSquare(squareAttributes, gamePiece) {
 		const { row, column } = squareAttributes.coordinates;
 		const newSquare = document.createElement("button");

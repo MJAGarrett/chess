@@ -17,8 +17,7 @@ class Game {
 	 *
 	 *
 	 * variable name = filteredMoves
-	 * structure =
-	 * key = move, value = rationale for filtering.
+	 * structure = Map<key: move, value: String>
 	 */
 
 	constructor() {
@@ -209,7 +208,7 @@ class Game {
 	}
 
 	/**
-	 * Provides basic logic to validate a game piece's moves are legal/logical.
+	 * Provides basic logic to validate that a game piece's moves are legal/logical.
 	 *
 	 * @param {[{row: Number, column: Number, canCapture: Boolean, mustCapture?: Boolean}]} moves An array of objects whose properties represent
 	 * a particular move the game piece in originalPosition could make.
@@ -290,7 +289,7 @@ class Game {
 	/**
 	 * Checks to see if the current player's King has been checked.
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of moves which could capture the current player's King.
 	 */
@@ -322,7 +321,7 @@ class Game {
 	/**
 	 * Gets an array of all game pieces on the board
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all game pieces on the board and their coordinates on it.
 	 */
@@ -353,7 +352,7 @@ class Game {
 	/**
 	 * Gets an array of all game pieces that do not belong to the current player.
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all enemy game pieces on the board and their coordinates on it.
 	 */
@@ -370,7 +369,7 @@ class Game {
 	/**
 	 * Gets an array of all game pieces that belong to the current player.
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all friendly game pieces on the board and their coordinates on it
 	 */
@@ -388,7 +387,7 @@ class Game {
 	/**
 	 * Gets an array of all moves which the opposing player can make.
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all the possible moves the opposing player can make.
 	 */
@@ -444,7 +443,7 @@ class Game {
 	 * Calls a chain of functions to get all moves of the opposite team (opposite as in not the current player)
 	 * which can capture. (EG filters out forward pawn moves blocked by a game piece).
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all enemy moves which can capture a game piece
 	 */
@@ -459,7 +458,7 @@ class Game {
 	/**
 	 * Calls a chain of functions to get all moves from friendly pieces (friendly being those pieces which belong to the current team)
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all moves which
 	 */
@@ -535,7 +534,7 @@ class Game {
 
 	/**
 	 * Adds a copy of the current board to the game's history state
-	 * @param {[[BoardPiece | Null]]} board A 2D array representing the playing board to add to the game's history.
+	 * @param {(BoardPiece | Null)[][]} board A 2D array representing the playing board to add to the game's history.
 	 */
 	addToHistory(board) {
 		this.history.push(this.copyHistory(board));
@@ -546,8 +545,8 @@ class Game {
 	 *
 	 * Instantiates entirely new references to all objects on the game board with identical properties.
 	 *
-	 * @param {[[BoardPiece | Null]]} board A 2D array representing the playing board
-	 * @returns {[[BoardPiece | Null]]} A copy of the board with new references to all the pieces in the same locations as the original.
+	 * @param {(BoardPiece | Null)[][]} board A 2D array representing the playing board
+	 * @returns {(BoardPiece | Null)[][]} A copy of the board with new references to all the pieces in the same locations as the original.
 	 */
 	copyHistory(board) {
 		const newBoard = new Array(8).fill(null).map(() => new Array(8).fill(null));
@@ -592,7 +591,7 @@ class Game {
 	 *
 	 * @param {{row: Number, column: Number, canCapture: Boolean, mustCapture?: Boolean}} move An object representing a given game piece's hypothetical move.
 	 * @param {{row: Number, column: Number}} oldPosition A tuple representing the position of a game piece prior to the hypothetical move.
-	 * @returns {[[BoardPiece | Null]]} A game board after the hypothetical move has taken place.
+	 * @returns {(BoardPiece | Null)[][]} A game board after the hypothetical move has taken place.
 	 */
 	alternateHistory(move, oldPosition, board = this.board) {
 		// Creates a copy to form a hypothetical future
@@ -608,10 +607,11 @@ class Game {
 		boardCopy[oldRow][oldColumn] = null;
 		return boardCopy;
 	}
+
 	/**
 	 * Creates a 2D array representing a game board and initializes the placement of game pieces.
 	 *
-	 * @returns {[[BoardPiece | Null]]} A game board after the pieces have been placed on it.
+	 * @returns {(BoardPiece | Null)[][]} A game board after the pieces have been placed on it.
 	 */
 	initialBoardSetup() {
 		let board = new Array(8).fill(null).map(() => new Array(8).fill(null));
@@ -648,6 +648,10 @@ class Game {
 		return board;
 	}
 
+	/**
+	 * Registers a gameController instance as an observer to the game.
+	 * @param {GameController} controller 
+	 */
 	registerController(controller) {
 		this.controller = controller;
 	}
@@ -661,6 +665,11 @@ class SingleplayerGame extends Game {
 		super();
 		this.gameType = "singleplayer";
 	}
+
+	/**
+	 * Saves a reference to the AI in the Game object.
+	 * @param {AI} AI A reference to the AI instance against which to play.
+	 */
 	registerAI(AI) {
 		this.enemyAI = AI;
 	}
@@ -719,11 +728,11 @@ class SingleplayerGame extends Game {
 	}
 
 	/**
-	 * Gets an array of all game pieces that belong to the current player.
+	 * Gets an array of all game pieces that belong to the AI.
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
-	 * @returns An array of all friendly game pieces on the board and their coordinates on it
+	 * @returns An array of all AI game pieces on the board and their coordinates on it
 	 */
 	getAIPieces(board = this.board) {
 		// Get all pieces on the board
@@ -769,10 +778,11 @@ class SingleplayerGame extends Game {
 			return validMoves;
 		});
 	}
+
 	/**
 	 * Calls a chain of functions to get all moves from AI pieces
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all moves which
 	 */
@@ -783,10 +793,11 @@ class SingleplayerGame extends Game {
 			return true;
 		});
 	}
+
 	/**
 	 * Gets an array of all game pieces that belong to the current player.
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
 	 * @returns An array of all friendly game pieces on the board and their coordinates on it
 	 */
@@ -802,7 +813,7 @@ class SingleplayerGame extends Game {
 	}
 
 	/**
-	 * Returns an array which represents all of the AI team's potential moves. Each element in the array is an object containing information about
+	 * Returns an array which represents all of the player's team's potential moves. Each element in the array is an object containing information about
 	 * a single potential move that can be made.
 	 *
 	 * The first two data members are the row and column of the move's target position.
@@ -812,8 +823,8 @@ class SingleplayerGame extends Game {
 	 * The final data member is a nested object whose own data members are the row and column of the game piece before
 	 * making this potential move.
 	 *
-	 * @param {Array[]} board Optional parameter - the game board against which to find possible moves. Defaults to the game board in current state.
-	 * @returns {[{row: Number, column: Number, canCapture: Boolean, originalCoordinates: {row: Number, column: Number}}]}
+	 * @param {(BoardPiece | Null)[][]} board Optional parameter - the game board against which to find possible moves. Defaults to the game board in current state.
+	 * @returns {{row: Number, column: Number, canCapture: Boolean, originalCoordinates: {row: Number, column: Number}}[]}
 	 * An array containing pertinent information about the potential moves.
 	 */
 	getPlayerMoves(board = this.board) {
@@ -836,11 +847,11 @@ class SingleplayerGame extends Game {
 	}
 
 	/**
-	 * Calls a chain of functions to get all moves from AI pieces
+	 * Calls a chain of functions to get all moves from Player pieces
 	 *
-	 * @param {[[BoardPiece | Null]]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
+	 * @param {(BoardPiece | Null)[][]} board The board environment in which the game piece's move is being evalutated. Defaults to the current board state.
 	 * Can be set for evaluating moves on hypothetical board states.
-	 * @returns An array of all moves which
+	 * @returns An array of all moves which the player can make.
 	 */
 	getCapablePlayerMoves(board = this.board) {
 		// Gets all moves friendly pieces can make and filters out null moves.
@@ -856,13 +867,25 @@ class OnlineGame extends Game {
 		super();
 		this.isOnline = true;
 	}
+	/**
+	 * Sets the local player's team.
+	 * @param {"white" | "black"} team A string representing a team.
+	 */
 	setLocalPlayerTeam(team) {
 		this.localPlayerTeam = team;
 	}
+
+	/**
+	 * Uses socket.io to emit an event along with a serialized version of the current game board to the server.
+	 */
 	sendToServer() {
 		this.socket.emit("gamemove", this.board);
 	}
 
+	/**
+	 * Recieves board info from the server and updates this game's states appropriately. Updates view as well.
+	 * @param {(GamePiece | Null)[][]} boardInfo A board object recieved from the server.
+	 */
 	updateOnSecondPlayerTurn(boardInfo) {
 		const newBoard = this.copyHistory(boardInfo);
 		this.addToHistory(this.board);
@@ -873,6 +896,12 @@ class OnlineGame extends Game {
 		this.controller.updateView();
 	}
 
+	/**
+	 * Gives the game access to a socket.io client to facilitate sending game board data to the server on a move.
+	 * 
+	 * Also registers an event handler to update the game board on recieving data from the server.
+	 * @param {*} socket A socket.io client object.
+	 */
 	registerSocket(socket) {
 		this.socket = socket;
 		this.socket.on("gamemove", (info) => {
@@ -881,6 +910,12 @@ class OnlineGame extends Game {
 	}
 }
 
+/**
+ * Instantiates and returns a reference to a new Game object. 
+ * 
+ * @param {"singleplayer" | "online" | any} gameType A string detailing which type of game to instantiate. Defaults to a sandbox game.
+ * @returns {SingleplayerGame | OnlineGame | Game} An instance of Game
+ */
 export default function gameSetup(gameType) {
 	switch (gameType) {
 	case "singleplayer":

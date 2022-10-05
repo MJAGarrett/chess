@@ -4,6 +4,11 @@ export default function PiecesSetup(gameBoard) {
 		name;
 		team;
 		constructor() {}
+		/**
+		 * Calls a piece specific implementation of a function which returns the possible moves a piece can make.
+		 * @param {{row: number, column: number}} index A two tuple representing the current position of the game piece.
+		 * @returns {({row: number, column: number, canCapture: boolean, mustCapture: boolean} | {row: number, column: number, canCapture: boolean})[]} 
+		 */
 		findPossibleMoves(index) {
 			const { row, column } = index;
 			return this.moveImplementation(row, column);
@@ -14,6 +19,14 @@ export default function PiecesSetup(gameBoard) {
 	}
 
 	class Pawn extends BoardPiece {
+		hasNotMoved;
+		name;
+		team;
+		/**
+		 * 
+		 * @param {String} team The team the piece belongs to.
+		 * @prop {Boolean} hasNotMoved A boolean representing if the pawn has moved yet.
+		 */
 		constructor(team) {
 			super();
 			this.name = "Pawn";
@@ -64,6 +77,9 @@ export default function PiecesSetup(gameBoard) {
 					return moves;
 				};
 		}
+		/**
+		 * Sets the hasNotMoved flag on the Pawn to false.
+		 */
 		setMoved() {
 			this.hasNotMoved = false;
 		}
