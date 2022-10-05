@@ -3,7 +3,7 @@ import * as path from "path";
 import httpErrors from "http-errors";
 import routes from "./routes";
 
-export default () => {
+export default (services) => {
 	const app = express();
 
 	app.set("view engine", "ejs");
@@ -17,7 +17,7 @@ export default () => {
 	// eslint-disable-next-line no-undef
 	app.use("/", express.static(path.join(__dirname, "../public")));
 
-	app.use("/", routes());
+	app.use("/", routes(services));
 
 	// Catch 404 errors and send them to the error handler.
 	app.use((req, res, next) => {

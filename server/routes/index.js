@@ -2,7 +2,8 @@ import { Router } from "express";
 
 const router = Router();
 
-export default () => {
+export default (services) => {
+	const {roomManager} = services;
 
 	router.get("/singleplayer/:difficulty", (req, res) => {
 		res.render("chess", {
@@ -24,7 +25,25 @@ export default () => {
 		});
 	});
 
-	router.get("/:id", (req, res) => {
+	router.post("/room/validate", async (req, res) => {
+		const {password, roomId} = req.body;
+		try {
+			const room = roomManager.findRoomById(roomId);
+			const passwordsMatch = await room.comparePasswords(password);
+
+			if(passwordsMatch) {
+				res.redirect(`/room/${roomId}`);
+			} else {
+				res.redirect("/");
+			}
+		} catch (err) {
+			console.error(err);
+			throw err;
+		}
+		
+	});
+
+	router.get("/room/:id", (req, res) => {
 		res.render("chess/index", {
 			pageData: {
 				styleSheets: ["chess"],
@@ -35,14 +54,14 @@ export default () => {
 		});
 	});
 
-	router.post("/newroom", (req, res) => {
+	router.get("/newroom", (req, res) => {
 		res.render("chess/index", {
 			pageData: {
 				styleSheets: ["chess"],
 				scripts: ["joinRoom"],
 				needsFontAwesome: true,
 			},
-			room: req.body.roomName,
+			online: true,
 		});
 	});
 

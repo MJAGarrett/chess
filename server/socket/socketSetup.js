@@ -1,7 +1,3 @@
-import RoomManager from "../models/RoomManager.js";
-
-const roomManager = new RoomManager();
-
 /**
  * Adds sockets to a socket.io room and a local Room object.
  * 
@@ -31,7 +27,7 @@ function joinRoom(socket, room) {
  * 
  * @param {Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>} io A socket.io server instance.
  */
-export default function setupSocket(io) {
+export default function setupSocket(io, roomManager) {
 	const selection = io.of("/selection");
 
 	// can convert the below to a simple fetch request and eliminate the selection namespace.
@@ -52,6 +48,7 @@ export default function setupSocket(io) {
 					name: room.name,
 					playerNum: room.players.length,
 					id: room.id,
+					password: room.hasPassword() ? true : false,
 				};
 			});
 
@@ -68,6 +65,7 @@ export default function setupSocket(io) {
 
 		// Handles sockets attempting to join a game room.
 		socket.on("joinRoom", (id) => {
+			console.log(id);
 			const room = roomManager.findRoomById(id);
 			if (room === null) {
 				throw new Error("Could not find room");
@@ -94,13 +92,16 @@ export default function setupSocket(io) {
 		});
 
 		// Handles sockets attempting to create a room.
-		socket.on("createRoom", (roomData) => {
-			const { name } = roomData;
+		socket.on("createRoom", async (roomData) => {
+			const { name, password } = roomData;
 			const rooms = io.of("/").adapter.rooms;
 			if (!rooms.has(name)) {
 				try {
-					roomManager.addRoom(name, socket.id);
+					const room = roomManager.addRoom(name, socket.id);
 					joinRoom(socket, name);
+					if(password) {
+						await room.setPassword(password);
+					}
 
 					socket.on("disconnect", () => {
 						roomManager.removePlayer(name, socket.id);

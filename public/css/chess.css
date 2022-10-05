@@ -12,6 +12,40 @@
   padding: 0;
   box-sizing: border-box;
 }
+dialog[open] {
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  background-color: lightgray;
+  padding: 2em;
+  box-shadow: 10px 10xp 10px 0 black;
+}
+.input-div > * {
+  display: block;
+  font-size: 24px;
+}
+.input-div input {
+  font-size: 18px;
+  border: 2px solid black;
+  margin: .25em 0 .5em 0;
+  max-width: 100%;
+  padding: .25em;
+}
+.input-div button {
+  padding: .5em;
+  margin: 15% auto 5% auto;
+  border-radius: .5em;
+  background-color: #999;
+  transition: all .15s ease-in-out;
+}
+.input-div button:hover,
+.input-div button:focus {
+  background-color: white;
+  transform: scale(1.05);
+}
+::backdrop {
+  background-color: #555
+}
 
 body {
   background-color: #152525;

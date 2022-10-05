@@ -1,9 +1,4 @@
-<% if (locals.room) { %>
-  <script>
-    const roomName = <%- JSON.stringify(room) %>;
-  </script>
-
-  <% } else if(locals.id) { %>
+  <% if(locals.id) { %>
     <script>
       const roomId = <%- JSON.stringify(id) %>; 
     </script>

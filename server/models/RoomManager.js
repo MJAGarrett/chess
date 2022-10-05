@@ -15,9 +15,14 @@ class RoomManager {
 	 * Checks to see if a room with the same name exists and, if not, creates a new room and stores it in memory.
 	 * @param {String} name The name of the room to be created.
 	 * @param {String} player A string representing the socket ID of a player. Likely to be replaced by a Player class.
+	 * @returns {Room} The instance of the newly created room.
 	 */
 	addRoom(name, player) {
-		if (this.findRoom(name) === null) return this.rooms.add(new Room(name, player));
+		if (this.findRoom(name) === null) {
+			const newRoom = new Room(name, player);
+			this.rooms.add(newRoom);
+			return newRoom;
+		}
 		else throw new Error("There is already a room with this name");
 	}
 

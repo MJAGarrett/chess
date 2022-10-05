@@ -1,4 +1,13 @@
+/**
+ * This class is a likely candidate to turn into a database model/schema.
+ * 
+ */
+
+
 import { v4 as uuidv4 } from "uuid";
+import bcrypt from "bcrypt";
+
+const SALT = 8;
 
 /**
  * A class representing an 2 player chess session, used alongside socket.io to handle sending game state info between players.
@@ -10,6 +19,7 @@ class Room {
 	_name;
 	_players;
 	_inProgress;
+	_password;
 	/**
 	 * Creates a new Room instance.
 	 * @param {String} name Name of the room to instantiate.
@@ -20,6 +30,7 @@ class Room {
 		this._players = players;
 		this._id = uuidv4();
 		this.inProgress = false;
+		this._password = null;
 	}
 
 	/**
@@ -81,6 +92,46 @@ class Room {
 	 */
 	setInProgress(value) {
 		return this._inProgress = value;
+	}
+
+	/**
+	 * Hashes and stores a plain text password in memory.
+	 * @param {String} password A plain text password.
+	 */
+	async setPassword(password) {
+		console.log("Making Password");
+		try {
+			const hashedPword = await bcrypt.hash(password, SALT);
+			this._password = hashedPword;
+			console.log("Password hashed");
+		} catch (err) {
+			console.error(err);
+			throw err;
+		}
+	}
+
+	/**
+	 * Compares a password to the hashed value stored.
+	 * @param {String} password Plain text password to compare.
+	 * @returns A promise which resolves to a boolean.
+	 */
+	async comparePasswords(password) {
+		try {
+			return bcrypt.compare(password, this._password);
+		} catch (err) {
+			console.error(err);
+			throw err;
+		}
+	}
+
+	/**
+	 * Returns true or false if the room has a password.
+	 * @returns {Boolean} Whether the password has been for this room.
+	 */
+	hasPassword() {
+		if(this._password) {
+			return true;
+		} return false;
 	}
 }
 
