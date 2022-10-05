@@ -9,6 +9,7 @@ class Room {
 	_id;
 	_name;
 	_players;
+	_inProgress;
 	/**
 	 * Creates a new Room instance.
 	 * @param {String} name Name of the room to instantiate.
@@ -18,6 +19,7 @@ class Room {
 		this._name = name;
 		this._players = players;
 		this._id = uuidv4();
+		this.inProgress = false;
 	}
 
 	/**
@@ -64,6 +66,21 @@ class Room {
 	 */
 	get id() {
 		return this._id;
+	}
+
+	/**
+	 * @returns {Boolean} The value of the inProgress flag.
+	 */
+	getInProgress() {
+		return this._inProgress;
+	}
+
+	/**
+	 * Sets the inProgress flag.
+	 * @param {Boolean} value
+	 */
+	setInProgress(value) {
+		return this._inProgress = value;
 	}
 }
 

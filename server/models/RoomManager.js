@@ -3,7 +3,7 @@ import Room from "./Room";
 /**
  * Class responsible for keeping a set of available rooms in memory and manipulating them appropriately.
  * 
- * Likely to become a service with the Room class being replaced by with a database to reduce impact on memory.
+ * Likely to become a service with the Room class being replaced with a database to reduce impact on memory.
  */
 class RoomManager {
 	rooms;
@@ -17,7 +17,7 @@ class RoomManager {
 	 * @param {String} player A string representing the socket ID of a player. Likely to be replaced by a Player class.
 	 */
 	addRoom(name, player) {
-		if (this.findRoom(name) === null) this.rooms.add(new Room(name, player));
+		if (this.findRoom(name) === null) return this.rooms.add(new Room(name, player));
 		else throw new Error("There is already a room with this name");
 	}
 

@@ -18,6 +18,7 @@ function joinRoom(socket, room) {
 
 	socket.on("disconnect", () => {
 		console.log(`Socket left room ${room}`);
+		socket.to(room).emit("playerleft");
 	});
 
 	console.log(`Socket has joined room ${room}`);
@@ -33,6 +34,7 @@ function joinRoom(socket, room) {
 export default function setupSocket(io) {
 	const selection = io.of("/selection");
 
+	// can convert the below to a simple fetch request and eliminate the selection namespace.
 	selection.on("connection", (socket) => {
 		console.log("Socket connected to selection namespace");
 
@@ -40,7 +42,12 @@ export default function setupSocket(io) {
 		socket.on("request-rooms", (callback) => {
 			const rooms = roomManager.getAllRooms();
 
-			const roomsData = rooms.map((room) => {
+			const eligibleRooms = rooms.filter((room) => {
+				if(!room.getInProgress()) return true;
+				return false;
+			});
+
+			const roomsData = eligibleRooms.map((room) => {
 				return {
 					name: room.name,
 					playerNum: room.players.length,
@@ -74,6 +81,11 @@ export default function setupSocket(io) {
 			) {
 				roomManager.joinRoom(room.name, socket.id);
 				joinRoom(socket, room.name);
+
+				if(room.players.length === 2) {
+					io.to(room.name).emit("fullgame");
+					room.setInProgress(true);
+				}
 
 				socket.on("disconnect", () => {
 					roomManager.removePlayer(room.name, socket.id);

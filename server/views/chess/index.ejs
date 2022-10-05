@@ -15,7 +15,9 @@
           <h4>Game Over?</h4>
           <span class="checkmate">false</span>
         </div>
-        <button class="restart" type="button">Restart Game</button>
+        <% if (!locals.id && !locals.room) { %>
+          <button class="restart" type="button">Restart Game</button>
+        <% } %>
         <a href="/" class="main-menu-btn">Main Menu</a>
       </section>
     </aside>

@@ -13,6 +13,4 @@ if(typeof roomId !== "undefined") {
 	socket.emit("createRoom", { name: roomName });
 }
 
-
-
 startGame({socket, AIDifficulty: null, online: true });

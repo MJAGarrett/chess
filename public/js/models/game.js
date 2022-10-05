@@ -865,8 +865,26 @@ class SingleplayerGame extends Game {
 class OnlineGame extends Game {
 	constructor() {
 		super();
+		this.hasTwoPlayers = false;
 		this.isOnline = true;
 	}
+
+	/**
+	 *  Used as an event handler which routes input from the view to the appropriate state handlers.
+	 *
+	 * @param {{row: Number, column: Number}} index A two-tuple whose data members represent the row and column of a
+	 * square on the game board. These numbers should correspond to an index on the 2D array representing the game board.
+	 */
+	handleClick(index) {
+		// If the game is in checkmate or there is only one socket listening to the game simply prevent selection or movement.
+		if (this.checkmate || !this.hasTwoPlayers) return;
+
+		// If no current selection attempt to select the piece at the index provided.
+		if (!this.selectedPiece) this.selectPiece(index);
+		// Finally, try to move/unselect the selected piece
+		else this.movePiece(index);
+	}
+
 	/**
 	 * Sets the local player's team.
 	 * @param {"white" | "black"} team A string representing a team.
@@ -897,6 +915,26 @@ class OnlineGame extends Game {
 	}
 
 	/**
+	 * Sets the hasTwoPlayers flag to true.
+	 * 
+	 * Used to allow interaction with the gameboard on a socket joining the game.
+	 */
+	playerJoined() {
+		this.hasTwoPlayers = true;
+		console.log("Joined");
+	}
+
+	/**
+	 * Sets the hasTwoPlayers flag to false.
+	 * 
+	 * Used to allow interaction with the gameboard on a socket leaving the game.
+	 */
+	playerLeft() {
+		this.hasTwoPlayers = false;
+		console.log("left");
+	}
+
+	/**
 	 * Gives the game access to a socket.io client to facilitate sending game board data to the server on a move.
 	 * 
 	 * Also registers an event handler to update the game board on recieving data from the server.
@@ -906,6 +944,12 @@ class OnlineGame extends Game {
 		this.socket = socket;
 		this.socket.on("gamemove", (info) => {
 			this.updateOnSecondPlayerTurn(info);
+		});
+		this.socket.on("fullgame", () => {
+			this.playerJoined();
+		});
+		this.socket.on("playerleft", () => {
+			this.playerLeft();
 		});
 	}
 }

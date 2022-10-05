@@ -20,7 +20,6 @@ export default () => {
 				scripts: ["singleplayer"],
 				styleSheets: ["chess"],
 				needsFontAwesome: true,
-				AIDifficulty: null,
 			},
 		});
 	});

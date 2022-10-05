@@ -31,6 +31,11 @@ export default function startGame(params) {
 			}
 			enemy.observeGame(game);
 		} else game = gameSetup("LAN");
+
+		document.querySelector(".restart").addEventListener("click", (e) => {
+			e.preventDefault();
+			game.restartGame();
+		});
 	}
 	else {
 		game = gameSetup("online");
@@ -38,11 +43,6 @@ export default function startGame(params) {
 	}
 
 	const controller = new GameController(game);
-
-	document.querySelector(".restart").addEventListener("click", (e) => {
-		e.preventDefault();
-		game.restartGame();
-	});
-
+	
 	controller.updateView();
 }
