@@ -25,9 +25,9 @@ class Room {
 	 * @param {String} name Name of the room to instantiate.
 	 * @param  {...String} players The IDs of the players to add.
 	 */
-	constructor(name, ...players) {
+	constructor(name) {
 		this._name = name;
-		this._players = players;
+		this._players = [];
 		this._id = uuidv4();
 		this.inProgress = false;
 		this._password = null;
@@ -99,11 +99,9 @@ class Room {
 	 * @param {String} password A plain text password.
 	 */
 	async setPassword(password) {
-		console.log("Making Password");
 		try {
 			const hashedPword = await bcrypt.hash(password, SALT);
 			this._password = hashedPword;
-			console.log("Password hashed");
 		} catch (err) {
 			console.error(err);
 			throw err;

@@ -4,7 +4,7 @@
   "description": "A simple game of Chess.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha 'tests/**/*.js'",
+    "test": "mocha 'tests/**/*.test.js'",
     "start": "nodemon --exec babel-node ./server/bin/start.js"
   },
   "author": "",
@@ -25,6 +25,7 @@
     "@babel/node": "^7.19.1",
     "@babel/preset-env": "^7.19.1",
     "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "eslint": "^8.24.0",
     "mocha": "^10.0.0",
     "prettier": "^2.7.1"

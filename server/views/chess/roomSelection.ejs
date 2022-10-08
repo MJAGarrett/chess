@@ -1,4 +1,13 @@
 <%- include("../partials/head") %>
+<% if(locals.errors) { 
+  console.log(errors);
+  errors.forEach((error) => {
+    console.log(error); %>
+    <div class="errors">
+      <p class="error"><%-error%></p>
+    </div>
+  <% }) %>
+<% } %>
   <table>
     <thead>
       <tr>
@@ -13,9 +22,7 @@
 
   </table>
 
-  <div>
-    <h2><a href="/newroom">Create a Room</a></h2>
-  </div>
+  <button class="create-room">Create a Room</button>
 
   <h2>Play against the AI</h2>
   <div class="difficulty-select">

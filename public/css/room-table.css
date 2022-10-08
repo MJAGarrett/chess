@@ -1,3 +1,12 @@
+*, *::after, *::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+::backdrop {
+  background-color: rgba(34, 34, 34, .75);
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -5,19 +14,27 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1em;
 }
 body > * {
   flex: 0 0 auto;
+}
+.create-room {
+  font-size: 1.5rem;
+  padding: .25em;
 }
 label {
   display: block;
 }
 table {
   margin: 0 auto;
-  width: 75%;
+  width: 100%;
   background-color: hsl(34, 25%, 75%);
   border-collapse: collapse;
-  max-width: 1000px;
+  max-width: 750px;
+}
+.fa-lock {
+  margin: 0 .5em;
 }
 
 th {
@@ -35,4 +52,52 @@ th {
 }
 .local-play > p {
   margin: .5em;
+}
+
+/* Modal styles */
+dialog[open] {
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  max-width: min(300px, 100vw);
+  background-color: lightgray;
+  padding: 2em;
+  box-shadow: 10px 10xp 10px 0 black;
+}
+.errors-container {
+  cursor: pointer;
+  margin-bottom: 1em;
+  padding: .5em;
+  border: 2px solid black;
+  background: #df8989;
+  border-radius: 5px 5px 15px 15px;
+  box-shadow: 3px 3px 10px -5px;
+}
+.input-form > *:not([hidden]) {
+  display: block;
+  font-size: 24px;
+}
+.input-form input {
+  font-size: 18px;
+  border: 2px solid black;
+  margin: .25em 0 .5em 0;
+  max-width: 100%;
+  padding: .25em;
+}
+.input-form button {
+  padding: .5em;
+  margin: 15% auto 5% auto;
+  border-radius: .5em;
+  background-color: #999;
+  transition: all .15s ease-in-out;
+}
+.input-form button:hover,
+.input-form button:focus {
+  background-color: white;
+  transform: scale(1.05);
+}
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }

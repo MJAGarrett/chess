@@ -32,10 +32,8 @@ export default function startGame(params) {
 			enemy.observeGame(game);
 		} else game = gameSetup("LAN");
 
-		document.querySelector(".restart").addEventListener("click", (e) => {
-			e.preventDefault();
-			game.restartGame();
-		});
+		addRestartButton(game);
+		
 	}
 	else {
 		game = gameSetup("online");
@@ -45,4 +43,18 @@ export default function startGame(params) {
 	const controller = new GameController(game);
 	
 	controller.updateView();
+}
+
+function addRestartButton(game) {
+	const restart = document.createElement("button");
+	restart.classList.add("restart");
+	restart.setAttribute("type", "button");
+	restart.textContent = "Restart Game";
+	restart.addEventListener("click", (e) => {
+		e.preventDefault();
+		game.restartGame();
+	});
+
+	const gameOver = document.querySelector(".game-over");
+	gameOver.after(restart);
 }

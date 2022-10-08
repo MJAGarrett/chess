@@ -1,20 +1,7 @@
-  <% if(locals.id) { %>
-    <script>
-      const roomId = <%- JSON.stringify(id) %>; 
-    </script>
-  <% } if(locals.AIDifficulty) { %>
-    <script>
-      const AIDifficulty = <%- JSON.stringify(AIDifficulty)%>; 
-    </script>
-  <% } else { %>
-  <script>
-    const AIDifficulty = null; 
-  </script>
-  <% } %>
-      <% if (pageData.scripts.length> 0) {
-        pageData.scripts.forEach((script) => { %>
-        <script src="/js/<%=script%>.js" type="module"></script>
+<% if (pageData.scripts.length> 0) {
+  pageData.scripts.forEach((script) => { %>
+  <script src="/js/<%=script%>.js" type="module"></script>
 
-        <% })} if(pageData.needsFontAwesome) { %>
-          <script src="https://kit.fontawesome.com/149d5df8b5.js" crossorigin="anonymous"></script>
-          <% } %>
+  <% })} if(pageData.needsFontAwesome) { %>
+    <script src="https://kit.fontawesome.com/149d5df8b5.js" crossorigin="anonymous"></script>
+    <% } %>

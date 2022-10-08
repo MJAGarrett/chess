@@ -21,5 +21,8 @@ server.addListener("listening", () => {
 	console.log(`App listening on port ${PORT}`);
 });
 
-
 server.listen(PORT);
+
+export default server; // testing purposes
+
+export { roomManager };

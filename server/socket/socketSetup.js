@@ -21,45 +21,11 @@ function joinRoom(socket, room) {
 }
 
 /**
- * Creates two namespaces, one dedicated to storing rooms for ongoing games and one for requesting a list of available rooms.
- * 
- * Sets up events appropriate for each namespace.
+ * Sets up the socket.io event handlers for joining a room and playing a move.
  * 
  * @param {Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>} io A socket.io server instance.
  */
 export default function setupSocket(io, roomManager) {
-	const selection = io.of("/selection");
-
-	// can convert the below to a simple fetch request and eliminate the selection namespace.
-	selection.on("connection", (socket) => {
-		console.log("Socket connected to selection namespace");
-
-		// Handle requests for rooms list.
-		socket.on("request-rooms", (callback) => {
-			const rooms = roomManager.getAllRooms();
-
-			const eligibleRooms = rooms.filter((room) => {
-				if(!room.getInProgress()) return true;
-				return false;
-			});
-
-			const roomsData = eligibleRooms.map((room) => {
-				return {
-					name: room.name,
-					playerNum: room.players.length,
-					id: room.id,
-					password: room.hasPassword() ? true : false,
-				};
-			});
-
-			callback(roomsData);
-		});
-
-		socket.on("disconnect", () => {
-			console.log("Socket left selection namespace");
-		});
-	});
-
 	io.on("connection", (socket) => {
 		console.log("Socket connected");
 
@@ -72,9 +38,19 @@ export default function setupSocket(io, roomManager) {
 			}
 			// Get a list of socket.io monitored rooms.
 			const rooms = io.of("/").adapter.rooms;
+			const socketRoom = rooms.get(room.name);
 
-			if (
-				rooms.get(room.name).size < 2 &&
+			// If the socket.io room does not exist, then create and join it.
+			if(socketRoom === undefined) {
+				roomManager.joinRoom(room.name, socket.id);
+				joinRoom(socket, room.name);
+
+				socket.on("disconnect", () => {
+					roomManager.removePlayer(room.name, socket.id);
+				});
+			}
+			else if (
+				socketRoom.size < 2 &&
         !roomManager.getRoomPlayers(room.name).includes(socket.id)
 			) {
 				roomManager.joinRoom(room.name, socket.id);
@@ -89,27 +65,6 @@ export default function setupSocket(io, roomManager) {
 					roomManager.removePlayer(room.name, socket.id);
 				});
 			} else console.log(`Room ${room.name} is full`);
-		});
-
-		// Handles sockets attempting to create a room.
-		socket.on("createRoom", async (roomData) => {
-			const { name, password } = roomData;
-			const rooms = io.of("/").adapter.rooms;
-			if (!rooms.has(name)) {
-				try {
-					const room = roomManager.addRoom(name, socket.id);
-					joinRoom(socket, name);
-					if(password) {
-						await room.setPassword(password);
-					}
-
-					socket.on("disconnect", () => {
-						roomManager.removePlayer(name, socket.id);
-					});
-				} catch (err) {
-					console.log(err);
-				}
-			}
 		});
 
 		socket.on("disconnect", () => {

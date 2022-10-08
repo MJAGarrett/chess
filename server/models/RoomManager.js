@@ -8,7 +8,7 @@ import Room from "./Room";
 class RoomManager {
 	rooms;
 	constructor() {
-		this.rooms = new Set();
+		this.rooms = [];
 	}
 
 	/**
@@ -17,10 +17,10 @@ class RoomManager {
 	 * @param {String} player A string representing the socket ID of a player. Likely to be replaced by a Player class.
 	 * @returns {Room} The instance of the newly created room.
 	 */
-	addRoom(name, player) {
+	addRoom(name) {
 		if (this.findRoom(name) === null) {
-			const newRoom = new Room(name, player);
-			this.rooms.add(newRoom);
+			const newRoom = new Room(name);
+			this.rooms.push(newRoom);
 			return newRoom;
 		}
 		else throw new Error("There is already a room with this name");
@@ -64,14 +64,6 @@ class RoomManager {
 	}
 
 	/**
-	 * 
-	 * @returns {IterableIterator<Room>} An iterator which iterates over the rooms stored in the Set this.rooms.
-	 */
-	roomsIterator() {
-		return this.rooms.values();
-	}
-
-	/**
 	 * Removes a player from a room. If there are no players left in the room, then delete the room from memory.
 	 * @param {String} name Name of the room to remove player from.
 	 * @param {String} player A string representing the socket ID of a player. Likely to be replaced by a Player class.
@@ -80,7 +72,9 @@ class RoomManager {
 		const room = this.findRoom(name);
 		if (room !== null) {
 			const leftovers = room.removePlayer(player);
-			if (leftovers.length === 0) this.rooms.delete(room);
+			if (leftovers.length === 0) {
+				this.rooms.splice(this.rooms.indexOf(room), 1);
+			}
 		}
 	}
 
@@ -94,6 +88,44 @@ class RoomManager {
 			rooms.push(room);
 		});
 		return rooms;
+	}
+
+	/**
+	 * Clears the rooms stored in memory.
+	 * 
+	 * Placeholder implementation of delete until hooked up to a DB.
+	 * @returns {[]} An empty array.
+	 */
+	clearRooms() {
+		return this.rooms = [];
+	}
+
+	/**
+	 * Returns an array of rooms currently held in memory. Will return a maximum of 10 rooms at a time. If there are fewer than 10 rooms in
+	 * memory than returns all rooms.
+	 * @param {Number} x The index from which to select rooms. 
+	 * @returns {Room[]} An array of at most 10 rooms.
+	 */
+	getOpenRooms() {
+		let openRooms = [];
+		for (const room of this.rooms) {
+			if(!room.getInProgress()) openRooms.push(room);
+		}
+		return openRooms;
+	}
+
+	/**
+	 * Returns a portion of the rooms stored in memory. Will return a maximum of 10 rooms. If there are no more unique rooms to return, will return an empty array.
+	 * @param {Number} [x=0] Index from which to select rooms, should be a multiple of 10.
+	 * @returns {Room[]}
+	 */
+	fetchRooms() {
+		if(this.rooms.length < 1) {
+			return [];
+		}
+		else {
+			return this.getOpenRooms();
+		}
 	}
 
 	/**
