@@ -74,17 +74,6 @@ export default (services) => {
 		});
 	});
 
-	router.get("/newroom", (req, res) => {
-		res.render("chess/index", {
-			pageData: {
-				styleSheets: ["chess"],
-				scripts: ["joinRoom"],
-				needsFontAwesome: true,
-			},
-			online: true,
-		});
-	});
-
 	router.get("/", (req, res) => {
 		res.render("chess/roomSelection", {
 			pageData: {
