@@ -21,12 +21,13 @@ export default (services) => {
 
 	// Catch 404 errors and send them to the error handler.
 	app.use((req, res, next) => {
-		next(httpErrors(404));
+		next(httpErrors(404, "The requested page cannot be found", 
+		));
 	});
 
-	app.use((err, req, res) => {
+	// eslint-disable-next-line no-unused-vars
+	app.use((err, req, res, next) => {
 		res.locals.error = req.app.get("env") === "development" ? err : {};
-
 		res.status(err.status || 500);
 		res.render("error");
 	});
